@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Golf Camera System - Modular Architecture</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🚀 Golf Camera System - Modular Architecture!</h1>
+            <div class="improvement-box">
+                <strong>✅ MODULAR ARCHITECTURE BENEFITS:</strong><br>
+                📁 Clean separation of concerns • 🔧 Easy maintenance • 🚀 Scalable design • 🐛 Better debugging<br>
+                <strong>Result:</strong> Professional, maintainable codebase that's easy to extend and debug!
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Video Stream Section -->
+            <section class="video-section">
+                <div class="video-container">
+                    <img src="{{ url_for('video_feed') }}" 
+                         width="640" height="480" 
+                         alt="Camera Stream"
+                         id="videoStream"/>
+                </div>
+            </section>
+
+            <!-- Status Display Section -->
+            <section class="status-section">
+                <div class="confidence-display">
+                    <div class="confidence-item">
+                        <div class="label">Predicted Pose</div>
+                        <div id="predictedPose" class="confidence-value">Unknown</div>
+                    </div>
+                    <div class="confidence-item">
+                        <div class="label">Current Stage</div>
+                        <div id="currentStage" class="confidence-value">waiting</div>
+                    </div>
+                    <div class="confidence-item">
+                        <div class="label">P1 Confidence</div>
+                        <div id="p1Confidence" class="confidence-value">0.00</div>
+                    </div>
+                    <div class="confidence-item">
+                        <div class="label">P10 Confidence</div>
+                        <div id="p10Confidence" class="confidence-value">0.00</div>
+                    </div>
+                </div>
+
+                <div class="performance-display">
+                    <div>Memory Efficiency: <span id="memoryEfficiency">--%</span></div>
+                    <div>Frames in Pool: <span id="framesInPool">--</span></div>
+                    <div>Upload Queue: <span id="uploadQueue">--</span></div>
+                    <div>Upload Success: <span id="uploadSuccess">--%</span></div>
+                </div>
+
+                <div class="info-box">
+                    <strong>📋 Auto Recording Settings:</strong> 20-second max duration • P1 detection starts recording • 
+                    <strong>P10 detection stops immediately</strong> • 25-second safety timeout
+                </div>
+            </section>
+
+            <!-- Controls Section -->
+            <section class="controls-section">
+                <div class="controls">
+                    <!-- AI Controls -->
+                    <div class="control-group">
+                        <h3>🤖 AI Controls</h3>
+                        <button id="poseBtn" class="toggle-btn active" onclick="togglePoseDetection()">
+                            📊 Pose Detection: ON
+                        </button>
+                        <button id="autoBtn" class="toggle-btn" onclick="toggleAutoRecording()">
+                            🎯 Auto Recording: OFF
+                        </button>
+                        <button id="reloadBtn" class="reload-btn" onclick="reloadModels()">
+                            🔄 Reload Model
+                        </button>
+                    </div>
+
+                    <!-- Manual Recording -->
+                    <div class="control-group">
+                        <h3>📹 Manual Recording</h3>
+                        <div class="recording-controls">
+                            <label for="duration">Duration:</label>
+                            <select id="duration" class="duration-select">
+                                <option value="3">3 seconds</option>
+                                <option value="5" selected>5 seconds</option>
+                                <option value="10">10 seconds</option>
+                                <option value="15">15 seconds</option>
+                                <option value="20">20 seconds</option>
+                            </select>
+                            <button id="recordBtn" class="record-btn" onclick="startRecording()">
+                                🎥 Start Recording
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Debug Controls -->
+                    <div class="control-group">
+                        <h3>🐛 Debug & Monitoring</h3>
+                        <div class="debug-controls">
+                            <button class="debug-btn" onclick="debugModelInfo()">📊 Model Info</button>
+                            <button class="debug-btn" onclick="testModelWithPose()">🧪 Test Current Pose</button>
+                            <button class="debug-btn" onclick="getSystemDebug()">🔍 System Debug</button>
+                        </div>
+                    </div>
+
+                    <!-- Upload & Performance -->
+                    <div class="control-group">
+                        <h3>📤 Upload & Performance</h3>
+                        <div class="upload-controls">
+                            <button class="upload-btn" onclick="checkUploads()">📊 Recent Uploads</button>
+                            <button class="upload-btn" onclick="checkUploadQueue()">🔄 Upload Queue</button>
+                            <button class="memory-btn" onclick="checkMemoryStats()">💾 Memory Stats</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Status Messages -->
+            <section class="messages-section">
+                <div id="status" class="status"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

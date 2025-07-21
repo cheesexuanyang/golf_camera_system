@@ -1,0 +1,52 @@
+# Golf Camera System Dependencies
+
+# === CORE FRAMEWORK ===
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# === CAMERA & VIDEO ===
+picamera2>=0.3.12
+opencv-python==4.8.1.78
+# Note: For Raspberry Pi, you might need opencv-python-headless instead
+
+# === AI & MACHINE LEARNING ===
+tensorflow>=2.13.0
+mediapipe>=0.10.3
+numpy>=1.24.3
+
+# === CLOUD STORAGE ===
+google-cloud-storage>=2.10.0
+google-auth>=2.23.0
+google-auth-oauthlib>=1.0.0
+google-auth-httplib2>=0.1.0
+
+# === UTILITIES ===
+psutil>=5.9.0  # Optional: for system monitoring
+requests>=2.31.0
+
+# === DEVELOPMENT (Optional) ===
+# pytest>=7.4.0
+# pytest-cov>=4.1.0
+# black>=23.7.0
+# flake8>=6.0.0
+
+# === RASPBERRY PI SPECIFIC ===
+# RPi.GPIO>=0.7.1  # If using GPIO features
+# gpiozero>=1.6.2  # Alternative GPIO library
+
+# === NOTES ===
+# For Raspberry Pi installation:
+# 1. Some packages may need to be installed via apt:
+#    sudo apt update
+#    sudo apt install python3-opencv python3-numpy python3-pip
+#    sudo apt install libatlas-base-dev libhdf5-dev libhdf5-serial-dev
+#    sudo apt install libqtgui4 libqtwebkit4 libqt4-test
+#
+# 2. TensorFlow Lite might be better for Pi:
+#    pip install tflite-runtime
+#
+# 3. For camera support:
+#    sudo apt install python3-picamera2
+#
+# 4. Google Cloud SDK (optional, for gcloud auth):
+#    curl https://sdk.cloud.google.com | bash
