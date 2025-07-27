@@ -1,256 +1,301 @@
-🏌️ Golf Camera System - Modular Architecture
-A professional, modular AI-powered golf swing analysis system built for Raspberry Pi with clean separation of concerns and enterprise-grade architecture.
-
-📁 Project Structure
-golf_camera_system/
-├── app.py                    # Main Flask application (entry point)
-├── requirements.txt          # Dependencies
-├── README.md                # This documentation
-├── config/
-│   ├── __init__.py
-│   └── settings.py          # All configuration settings
-├── camera/
-│   ├── __init__.py
-│   ├── camera_manager.py    # Camera operations & streaming
-│   └── video_recorder.py    # Video recording logic
-├── ai/
-│   ├── __init__.py
-│   ├── pose_detector.py     # MediaPipe pose detection
-│   ├── model_manager.py     # TensorFlow model handling
-│   └── pose_classifier.py   # Golf pose classification
-├── storage/
-│   ├── __init__.py
-│   └── uploader.py          # Background upload system
-├── utils/
-│   ├── __init__.py
-│   ├── frame_pool.py        # Memory management
-│   ├── helpers.py           # Utility functions
-│   └── logger.py            # Centralized logging
-├── templates/
-│   └── index.html           # Web interface template
-└── static/
-    ├── css/
-    │   └── style.css        # Separated styles
-    └── js/
-        └── main.js          # Separated JavaScript
-
-🚀 Features
+An advanced AI-powered golf swing analysis system built for Raspberry Pi with real-time pose detection, automatic recording, and cloud storage integration.
+Features
 Core Functionality
-AI Golf Pose Detection: 10-class pose classification (P1-P10)
-Auto Recording: Automatically starts/stops recording based on golf poses
-Manual Recording: Configurable duration recording
-Real-time Streaming: Live camera feed with pose overlays
-Performance Optimizations
-Background Uploads: Non-blocking uploads to Google Cloud Storage
-Frame Pooling: Memory-efficient frame reuse system
-Optimized Processing: Frame skipping and efficient encoding
-Professional Features
-Modular Architecture: Clean separation of concerns
-Comprehensive Logging: Centralized logging with categories
-Error Handling: Robust error handling throughout
-Status Monitoring: Real-time system status and performance metrics
 
-🛠️ Installation
-Prerequisites
+Automatic Recording: AI-triggered recording based on golf pose detection (P1 address to swing sequence to P10 finish)
+Real-time Pose Analysis: 10-stage golf swing classification (P1-P10) using MediaPipe and TensorFlow
+Cloud Integration: Automatic background uploads to Google Cloud Storage
+Web Interface: Real-time video streaming with pose overlays and system controls
+Memory Optimization: Efficient frame pooling system for reduced memory allocation overhead
+
+Technical Highlights
+
+Modular Architecture: Clean separation of concerns across camera, AI, storage, and utility modules
+Performance Optimized: Frame skipping, memory pooling, and background processing
+Error Resilient: Comprehensive error handling and logging throughout the system
+Scalable Design: Easy to extend and maintain with clear module boundaries
+
 Raspberry Pi 4 (recommended) with camera module
 Python 3.8+
-Google Cloud Storage account and credentials
-1. System Dependencies
-bash
-sudo apt update
-sudo apt install python3-pip python3-opencv python3-numpy
-sudo apt install libatlas-base-dev libhdf5-dev libhdf5-serial-dev
-sudo apt install python3-picamera2
-2. Python Dependencies
-bash
-cd golf_camera_system
-pip3 install -r requirements.txt
-3. Google Cloud Setup
-bash
-# Install Google Cloud SDK (optional)
+Google Cloud Storage account (for uploads)
+Minimum 4GB RAM recommended
+
+System Dependencies
+bash# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install system dependencies
+sudo apt install -y python3-pip python3-venv
+sudo apt install -y python3-opencv python3-numpy
+sudo apt install -y libatlas-base-dev libhdf5-dev libhdf5-serial-dev
+sudo apt install -y python3-picamera2
+
+# Enable camera interface
+sudo raspi-config
+# Navigate to Interface Options > Camera > Enable
+Python Environment Setup
+bash# Clone repository
+git clone <your-repo-url>
+cd golf-camera-system
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install Python dependencies
+pip install -r requirements.txt
+Google Cloud Setup
+bash# Install Google Cloud SDK (optional, for authentication)
 curl https://sdk.cloud.google.com | bash
+exec -l $SHELL
 
-# Set up authentication
+# Authenticate (or use service account key)
 gcloud auth application-default login
-4. Configuration
-Edit config/settings.py to match your setup:
 
-python
-BUCKET_NAME = "your-gcs-bucket-name"
-GCS_MODEL_NAME = "your-model-file.keras"
-VIDEO_DIR = "/path/to/your/videos"
+# Or set service account key
+export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service-account-key.json"
+Configuration
+Basic Configuration
+Edit config/settings.py to customize your setup:
+python# GOOGLE CLOUD STORAGE
+BUCKET_NAME = "your-golf-swing-bucket"
+GCS_MODEL_NAME = "your_model.keras"
 
-🎯 Usage
-Starting the System
-bash
-python3 app.py
-Web Interface
-Navigate to http://your-pi-ip:5000 to access the web interface.
+# CAMERA CONFIGURATION
+CAMERA_PREVIEW_SIZE = (1280, 720)
+CAMERA_RECORDING_SIZE = (1920, 1080)
 
-API Endpoints
-GET / - Web interface
-GET /video_feed - Live camera stream
-POST /start_recording - Start manual recording
-POST /toggle_auto_recording - Toggle auto recording
-POST /toggle_pose_detection - Toggle pose detection
-POST /reload_models - Reload AI model
-GET /system_status - Get system status
-GET /memory_stats - Get memory efficiency stats
-GET /recent_uploads - Get upload history
-
-🔧 Configuration
-Core Settings (config/settings.py)
-python
-# Camera settings
-CAMERA_PREVIEW_SIZE = (640, 480)
-CAMERA_RECORDING_SIZE = (1280, 720)
-
-# AI thresholds
+# AI MODEL CONFIGURATION
+CLASS_NAMES = ['P1', 'P10', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9']
 P1_CONFIDENCE_THRESHOLD = 0.7
 P10_CONFIDENCE_THRESHOLD = 0.7
 
-# Performance settings
-FRAME_POOL_SIZE = 8
-UPLOAD_MAX_WORKERS = 2
-Environment Variables
-bash
-export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service-account.json"
-export FLASK_ENV=production  # or development
+# RECORDING DEFAULTS
+DEFAULT_RECORDING_DURATION = 5  # seconds
+AUTO_RECORDING_DURATION = 20    # seconds for auto-triggered recordings
+Directory Setup
+The system will automatically create necessary directories:
 
-📊 Monitoring
+/home/raspberry/Videos/ - Local video storage
+/home/raspberry/models/ - AI model storage
+
+Model Setup
+
+Train your golf pose classification model or obtain a pre-trained model
+Upload your model to Google Cloud Storage as best_model.keras
+The system will automatically download and load the model on startup
+
+Usage
+Starting the System
+bash# Activate virtual environment
+source venv/bin/activate
+
+# Start the application
+python app.py
+The system will start on http://localhost:5000 (or your Raspberry Pi's IP address).
+Web Interface
+Main Controls
+
+Start Recording: Manual recording with configurable duration
+Auto Recording: AI-triggered recording based on pose detection
+Pose Detection: Toggle real-time pose analysis
+Reload Model: Refresh the AI model from cloud storage
+
+Status Display
+
+Real-time pose classification (P1-P10)
+Confidence scores for key poses (P1 address, P10 finish)
+Memory efficiency and performance metrics
+Upload queue status
+
+Debug Tools
+
+Model information and testing
+System diagnostics
+Upload monitoring
+Memory usage statistics
+
+Auto Recording Workflow
+
+Enable Auto Recording: Click "Auto Recording: OFF" to enable
+Stand in Address Position: System detects P1 pose with high confidence
+Begin Swing: Movement from P1 triggers recording
+Automatic Stop: P10 finish pose or 20-second timeout stops recording
+Background Upload: Video automatically uploads to Google Cloud Storage
+
+Manual Recording
+
+Select duration (3-20 seconds)
+Click "Start Recording"
+Perform your golf swing
+Video saves locally and uploads in background
+
+API Endpoints
+Recording Control
+
+POST /start_recording - Start manual recording
+POST /toggle_auto_recording - Toggle auto recording
+POST /toggle_pose_detection - Toggle pose detection
+
 System Status
-The web interface provides real-time monitoring of:
 
-AI model status and predictions
-Recording status and queue
-Memory efficiency metrics
-Upload queue and success rates
-Camera status and performance
-Logging
-Logs are categorized by component:
+GET /system_status - Comprehensive system status
+GET /recording_status - Recording status (legacy)
+GET /upload_queue_status - Upload queue information
 
-📷 Camera operations
-🧠 AI/ML operations
-☁️ Upload operations
-🎥 Recording operations
-⚡ Performance metrics
-🔧 Development
-Adding New Features
-1. New AI Model
-python
-# ai/new_model.py
-from ai.model_manager import ModelManager
+Debug & Monitoring
 
-class NewModelManager(ModelManager):
-    def __init__(self):
-        super().__init__()
-        # Custom implementation
-2. New Storage Backend
-python
-# storage/new_backend.py
-from storage.uploader import BackgroundUploader
+GET /debug_model_info - AI model information
+POST /test_model_with_pose - Test model with current frame
+GET /system_debug - Comprehensive debug information
+GET /memory_stats - Memory efficiency statistics
+GET /recent_uploads - Recent upload history
 
-class NewUploader(BackgroundUploader):
-    def __init__(self):
-        super().__init__()
-        # Custom implementation
-3. New Camera Features
-python
-# camera/new_feature.py
-from camera.camera_manager import CameraManager
+Model Management
 
-class EnhancedCameraManager(CameraManager):
-    def __init__(self):
-        super().__init__()
-        # Custom implementation
-Testing
-bash
-# Run individual module tests
-python3 -m pytest tests/test_camera.py
-python3 -m pytest tests/test_ai.py
-python3 -m pytest tests/test_storage.py
+POST /reload_models - Reload AI model from cloud storage
 
-# Run all tests
-python3 -m pytest
+AI Model Requirements
+Input Format
 
-🐛 Troubleshooting
+Shape: (batch_size, 132) - Flattened pose landmarks
+Normalization: Hip-centered coordinate system with distance normalization
+Landmarks: 33 MediaPipe pose landmarks × 4 coordinates (x, y, z, visibility)
+
+Output Format
+
+Classes: 10 golf swing poses (P1-P10)
+Output: Softmax probabilities for each class
+
+Training Data Format
+The system expects landmarks normalized using this method:
+python# Hip-centered normalization (from pose_classifier.py)
+left_hip = landmarks[mp.solutions.pose.PoseLandmark.LEFT_HIP.value]
+right_hip = landmarks[mp.solutions.pose.PoseLandmark.RIGHT_HIP.value]
+center_x = (left_hip.x + right_hip.x) / 2
+center_y = (left_hip.y + right_hip.y) / 2
+max_distance = max([sqrt((lm.x - center_x)² + (lm.y - center_y)²) for lm in landmarks])
+
+normalized_landmarks = [
+    [(landmark.x - center_x) / max_distance,
+     (landmark.y - center_y) / max_distance,
+     landmark.z / max_distance,
+     landmark.visibility] 
+    for landmark in landmarks
+].flatten()
+Performance Optimization
+Memory Management
+
+Frame Pooling: Pre-allocated frame buffers reduce garbage collection
+Efficient Processing: Frame skipping and interval-based processing
+Background Operations: Non-blocking uploads and AI inference
+
+Monitoring
+
+Real-time memory efficiency metrics
+Upload success rates and queue monitoring
+Performance timing for critical operations
+
+Troubleshooting
 Common Issues
-Camera Not Working
-bash
-# Check camera detection
-libcamera-hello
+Camera Not Detected
+bash# Check camera connection
+vcgencmd get_camera
 
-# Check picamera2 installation
-python3 -c "from picamera2 import Picamera2; print('OK')"
-AI Model Issues
-Check model file exists in GCS bucket
-Verify Google Cloud credentials
-Check model format compatibility
-Memory Issues
-Monitor memory efficiency in web interface
-Adjust FRAME_POOL_SIZE in settings
-Check system memory with htop
-Upload Issues
-Verify GCS bucket permissions
-Check network connectivity
-Monitor upload queue status
+# Enable camera interface
+sudo raspi-config
+Model Loading Fails
+bash# Check Google Cloud authentication
+gcloud auth list
+
+# Verify bucket access
+gsutil ls gs://your-bucket-name/
+
+# Check model file exists
+gsutil ls gs://your-bucket-name/best_model.keras
+High Memory Usage
+
+Reduce FRAME_POOL_SIZE in settings
+Increase FRAME_SKIP_INTERVAL for less frequent processing
+Lower camera resolution in CAMERA_PREVIEW_SIZE
+
+Upload Failures
+
+Verify internet connection
+Check Google Cloud Storage permissions
+Monitor upload queue: GET /upload_queue_status
+
 Debug Mode
-bash
-# Enable debug logging
-export FLASK_ENV=development
-python3 app.py
+Enable detailed logging by setting:
+pythonLOG_LEVEL = "DEBUG"
+FLASK_DEBUG = True
 System Diagnostics
-Use the web interface debug endpoints:
+Use the web interface debug tools:
 
-Model Info: /debug_model_info
-System Debug: /system_debug
-Memory Stats: /memory_stats
+System Debug: Comprehensive system information
+Test Current Pose: Validate AI model with current frame
+Memory Stats: Detailed memory usage analysis
 
-📈 Performance Optimization
-Memory Optimization
-Frame pooling reduces memory allocation overhead
-Configurable pool size based on available RAM
-Efficient frame copying and reuse
-Upload Optimization
-Background uploads don't block recording
-Retry logic with exponential backoff
-Automatic cleanup of uploaded files
-Processing Optimization
-Frame skipping for real-time performance
-Optimized JPEG encoding settings
-Efficient pose processing pipeline
+Security Considerations
 
-🤝 Contributing
+Network Access: System binds to 0.0.0.0:5000 - consider firewall rules
+File Permissions: Ensure proper permissions for video and model directories
+Cloud Credentials: Secure your Google Cloud service account keys
+Local Storage: Videos are temporarily stored locally before upload
+
+Development
+Adding New Modules
+The modular architecture makes it easy to extend:
+
+Create Module Directory: Follow the pattern of existing modules
+Add __init__.py: Export main classes/functions
+Import in Main App: Add to app.py imports
+Update Configuration: Add settings to config/settings.py
+
 Code Style
-Follow PEP 8 conventions
+
+Follow PEP 8 python style guidelines
 Use type hints where appropriate
-Add comprehensive docstrings
-Include error handling
-Module Guidelines
-Keep modules focused on single responsibility
-Use proper imports and exports
-Add logging for important operations
 Include comprehensive error handling
-Pull Request Process
-Create feature branch
-Add tests for new functionality
-Update documentation
-Ensure all tests pass
-Submit pull request
-📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+Add logging for important operations
 
-🙏 Acknowledgments
-MediaPipe team for pose detection
-TensorFlow team for ML framework
-Raspberry Pi Foundation for hardware platform
-Flask team for web framework
-📞 Support
-For issues and questions:
+Testing
+bash# Run with debug mode
+FLASK_DEBUG=True python app.py
 
-Check the troubleshooting section
-Review system logs
-Use the debug endpoints
-Create an issue with detailed logs and system info
-Built with ❤️ for the golf community using professional software architecture patterns.
+# Use web interface debug tools
+# Monitor logs for issues
+tail -f /var/log/your-app.log
+License
+[Add your license information here]
+Contributing
+[Add contribution guidelines here]
+Support
+[Add support contact information here]
 
+Key Benefits of This Architecture
+Modularity
+
+Independent Components: Each module has a single responsibility
+Easy Testing: Modules can be tested in isolation
+Simple Maintenance: Changes in one module don't affect others
+
+Performance
+
+Memory Efficient: Frame pooling reduces allocation overhead
+Non-blocking Operations: Background uploads and processing
+Optimized AI Pipeline: Smart frame processing intervals
+
+Reliability
+
+Comprehensive Error Handling: Graceful degradation on failures
+Automatic Recovery: System continues operation despite individual component failures
+Detailed Logging: Full visibility into system operation
+
+Scalability
+
+Cloud Integration: Automatic uploads and model management
+Configurable Performance: Tunable parameters for different hardware
+Extensible Design: Easy to add new features and capabilities
+
+This modular architecture ensures your golf camera system is professional, maintainable, and ready for production use.
